@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>C.A.R.L. Concept Validation</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080a0c;
+  --bg2: #0d1014;
+  --panel: #111518;
+  --panel2: #161b20;
+  --border: #1a2228;
+  --border2: #243040;
+  --accent: #00c9a7;
+  --accent2: #ff6b2b;
+  --accent3: #ffd166;
+  --mil: #4ade80;
+  --le: #60a5fa;
+  --civ: #f472b6;
+  --text: #c8d8e0;
+  --muted: #4a6070;
+  --dim: #2a3a44;
+  --pass: #00c9a7;
+  --fail: #ff4444;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Barlow',sans-serif;
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* GRID BG */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,201,167,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,201,167,0.03) 1px,transparent 1px);
+  background-size:32px 32px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  max-width:720px;
+  margin:0 auto;
+  padding:0 16px 80px;
+}
+
+/* ═══ SCREENS ═══ */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ═══ LANDING ═══ */
+#screen-landing{
+  min-height:100vh;
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  padding:40px 16px;
+}
+#screen-landing.active{display:flex;}
+
+.landing-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.35em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.landing-tag::before{
+  content:'';
+  width:5px;height:5px;
+  background:var(--accent);
+  border-radius:50%;
+  animation:blink 2s infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+.landing-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(52px,12vw,88px);
+  line-height:0.92;
+  color:#fff;
+  margin-bottom:6px;
+  letter-spacing:0.03em;
+}
+.landing-title span{color:var(--accent);}
+
+.landing-sub{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(13px,3.5vw,17px);
+  letter-spacing:0.2em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:32px;
+}
+
+.landing-intro{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent);
+  padding:18px 20px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.75;
+  margin-bottom:36px;
+  border-radius:2px;
+}
+.landing-intro strong{color:var(--accent);}
+
+.role-label{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.25em;
+  color:var(--dim);
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.role-cards{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-bottom:32px;
+}
+
+.role-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:2px;
+  padding:18px 20px;
+  cursor:pointer;
+  transition:all 0.18s;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  position:relative;
+  overflow:hidden;
+}
+.role-card::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  transition:opacity 0.2s;
+  opacity:0.4;
+}
+.role-card.mil::before{background:var(--mil);}
+.role-card.le::before{background:var(--le);}
+.role-card.civ::before{background:var(--civ);}
+
+.role-card:hover,.role-card.selected{border-color:var(--border2);transform:translateX(3px);}
+.role-card.mil.selected{border-color:var(--mil);background:rgba(74,222,128,0.05);}
+.role-card.mil.selected::before{opacity:1;}
+.role-card.le.selected{border-color:var(--le);background:rgba(96,165,250,0.05);}
+.role-card.le.selected::before{opacity:1;}
+.role-card.civ.selected{border-color:var(--civ);background:rgba(244,114,182,0.05);}
+.role-card.civ.selected::before{opacity:1;}
+
+.role-icon{
+  font-size:26px;
+  min-width:36px;
+  text-align:center;
+}
+.role-info{}
+.role-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;
+  letter-spacing:0.06em;
+  color:#fff;
+}
+.role-desc{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.4;
+}
+
+.btn-start{
+  width:100%;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;
+  letter-spacing:0.3em;
+  background:var(--accent);
+  color:var(--bg);
+  border:none;
+  padding:16px;
+  cursor:pointer;
+  border-radius:2px;
+  transition:all 0.2s;
+  opacity:0.4;
+  pointer-events:none;
+}
+.btn-start.ready{opacity:1;pointer-events:all;}
+.btn-start.ready:hover{background:#00e8c0;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,201,167,0.25);}
+
+/* ═══ SURVEY ═══ */
+.sticky-top{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(8,10,12,0.96);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:10px 16px;
+  margin:0 -16px 32px;
+}
+.admin-drawer-wrap{
+  position:absolute;
+  top:100%;
+  left:0;right:0;
+  z-index:200;
+  padding:0 16px;
+  background:rgba(8,10,12,0.98);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+
+.sticky-inner{
+  max-width:720px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.sticky-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:15px;
+  letter-spacing:0.1em;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+.progress-wrap{
+  flex:1;
+  max-width:200px;
+}
+.progress-bg{height:2px;background:var(--border);border-radius:1px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:1px;transition:width 0.4s ease;width:0%;}
+.progress-pct{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:0.1em;
+  margin-top:4px;
+  text-align:right;
+}
+
+.btn-admin{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.15em;
+  color:var(--dim);
+  background:none;
+  border:1px solid var(--dim);
+  padding:4px 8px;
+  cursor:pointer;
+  border-radius:2px;
+  transition:all 0.2s;
+  white-space:nowrap;
+}
+.btn-admin:hover{border-color:var(--accent3);color:var(--accent3);}
+
+/* ADMIN DRAWER */
+.admin-drawer{
+  display:none;
+  background:rgba(255,209,102,0.06);
+  border:1px solid rgba(255,209,102,0.2);
+  border-left:3px solid var(--accent3);
+  padding:14px 16px;
+  margin:8px 0 0;
+  border-radius:2px;
+}
+.admin-drawer.open{display:block;}
+.admin-pin-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.admin-pin-row input{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px;
+  padding:6px 10px;
+  border-radius:2px;
+  width:90px;
+  outline:none;
+  letter-spacing:0.3em;
+}
+.admin-pin-row input:focus{border-color:var(--accent3);}
+.btn-pin{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  background:var(--accent3);
+  color:var(--bg);
+  border:none;
+  padding:6px 14px;
+  cursor:pointer;
+  border-radius:2px;
+}
+.pin-err{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--fail);
+  display:none;
+  margin-bottom:6px;
+}
+.admin-scores-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.admin-score-chip{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:0.05em;
+}
+.admin-score-chip strong{
+  display:block;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:17px;
+  letter-spacing:0.05em;
+}
+.admin-score-chip strong.p{color:var(--pass);}
+.admin-score-chip strong.f{color:var(--fail);}
+.admin-score-chip strong.n{color:var(--accent3);}
+
+/* ═══ SURVEY SECTIONS ═══ */
+.survey-header{
+  padding:32px 0 24px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:32px;
+  position:relative;
+}
+.survey-header::after{
+  content:'';
+  position:absolute;
+  bottom:-1px;left:0;
+  width:60px;height:2px;
+  background:var(--accent);
+}
+.survey-role-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.2em;
+  padding:4px 10px;
+  border-radius:2px;
+  margin-bottom:14px;
+  text-transform:uppercase;
+}
+.survey-role-badge.mil{background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);color:var(--mil);}
+.survey-role-badge.le{background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3);color:var(--le);}
+.survey-role-badge.civ{background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.3);color:var(--civ);}
+
+.survey-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,8vw,56px);
+  letter-spacing:0.04em;
+  line-height:1;
+  color:#fff;
+  margin-bottom:8px;
+}
+.survey-title span{color:var(--accent);}
+.survey-note{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.65;
+  max-width:560px;
+}
+.survey-note strong{color:var(--text);}
+
+/* SECTION BLOCKS */
+.s-block{
+  margin-bottom:28px;
+  border:1px solid var(--border);
+  border-radius:2px;
+  overflow:hidden;
+}
+
+.s-header{
+  background:var(--panel);
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+  overflow:hidden;
+}
+.s-header::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+}
+.s-accent-1::before{background:#00c9a7;}
+.s-accent-2::before{background:#ff6b2b;}
+.s-accent-3::before{background:#ffd166;}
+.s-accent-4::before{background:#a78bfa;}
+.s-accent-5::before{background:#38bdf8;}
+
+.s-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:24px;
+  line-height:1;
+  color:var(--dim);
+  min-width:28px;
+}
+.s-name{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;
+  letter-spacing:0.04em;
+  color:#fff;
+}
+.s-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+
+.s-body{
+  background:var(--bg2);
+  padding:20px;
+}
+
+/* QUESTIONS */
+.q{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid var(--border);}
+.q:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+
+.q-text{
+  font-size:14px;
+  font-weight:500;
+  color:#c0d0da;
+  line-height:1.55;
+  margin-bottom:12px;
+}
+.q-hint{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--dim);
+  letter-spacing:0.08em;
+  margin-bottom:10px;
+  margin-top:-6px;
+}
+
+/* LIKERT */
+.likert{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:6px;
+}
+.lik-opt input{display:none;}
+.lik-opt label{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  padding:10px 4px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:2px;
+  cursor:pointer;
+  transition:all 0.14s;
+  text-align:center;
+}
+.lik-opt label:hover{border-color:var(--border2);}
+.lik-opt input:checked + label{
+  border-color:var(--accent);
+  background:rgba(0,201,167,0.08);
+}
+.lik-n{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;
+  line-height:1;
+  color:#fff;
+}
+.lik-opt input:checked + label .lik-n{color:var(--accent);}
+.lik-d{
+  font-size:9px;
+  color:var(--muted);
+  line-height:1.3;
+}
+.lik-opt input:checked + label .lik-d{color:var(--accent);}
+
+/* BINARY */
+.binary{display:flex;gap:10px;flex-wrap:wrap;}
+.bin-opt input{display:none;}
+.bin-opt label{
+  padding:10px 22px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:2px;
+  cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  transition:all 0.14s;
+  color:var(--muted);
+}
+.bin-opt label:hover{border-color:var(--border2);color:var(--text);}
+.bin-yes input:checked + label{border-color:var(--pass);background:rgba(0,201,167,0.1);color:var(--pass);}
+.bin-no input:checked + label{border-color:var(--fail);background:rgba(255,68,68,0.1);color:var(--fail);}
+.bin-neu input:checked + label{border-color:var(--accent3);background:rgba(255,209,102,0.1);color:var(--accent3);}
+
+/* OPEN TEXT */
+.open-field{
+  width:100%;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Barlow',sans-serif;
+  font-size:14px;
+  padding:12px 14px;
+  border-radius:2px;
+  outline:none;
+  resize:vertical;
+  min-height:80px;
+  line-height:1.6;
+  transition:border-color 0.2s;
+}
+.open-field:focus{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,201,167,0.12);}
+.open-field.tall{min-height:110px;}
+
+/* SELECT */
+.sel-field{
+  width:100%;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Barlow',sans-serif;
+  font-size:14px;
+  padding:10px 36px 10px 14px;
+  border-radius:2px;
+  outline:none;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6070' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  transition:border-color 0.2s;
+  cursor:pointer;
+}
+.sel-field:focus{border-color:var(--accent);}
+
+/* FIELD LABEL */
+.f-label{
+  display:block;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+/* FORM GRID */
+.form-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-1{margin-bottom:14px;}
+@media(max-width:480px){.form-2{grid-template-columns:1fr;}}
+
+/* RESPONDENT BLOCK */
+.resp-block{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent2);
+  padding:20px;
+  margin-bottom:28px;
+  border-radius:2px;
+}
+.resp-block-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.25em;
+  color:var(--accent2);
+  text-transform:uppercase;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.resp-block-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* SUBMIT */
+.submit-wrap{
+  margin-top:36px;
+  padding-top:28px;
+  border-top:1px solid var(--border);
+  text-align:center;
+}
+.btn-submit{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;
+  letter-spacing:0.3em;
+  background:var(--accent);
+  color:var(--bg);
+  border:none;
+  padding:16px 48px;
+  cursor:pointer;
+  border-radius:2px;
+  transition:all 0.2s;
+  width:100%;
+  max-width:360px;
+}
+.btn-submit:hover{background:#00e8c0;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,201,167,0.25);}
+.btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.submit-note{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--dim);
+  letter-spacing:0.1em;
+  margin-top:12px;
+}
+
+/* SHEETS CONFIG */
+.sheets-config{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent3);
+  padding:16px 20px;
+  margin-bottom:28px;
+  border-radius:2px;
+}
+.sheets-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:16px;
+  letter-spacing:0.05em;
+  color:var(--accent3);
+  margin-bottom:10px;
+}
+.sheets-row{display:flex;gap:8px;align-items:stretch;}
+.sheets-input{
+  flex:1;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  padding:8px 12px;
+  border-radius:2px;
+  outline:none;
+  min-width:0;
+}
+.sheets-input:focus{border-color:var(--accent3);}
+.btn-save-url{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  background:var(--accent3);
+  color:var(--bg);
+  border:none;
+  padding:8px 16px;
+  cursor:pointer;
+  border-radius:2px;
+  white-space:nowrap;
+}
+.url-status{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--dim);
+  margin-top:7px;
+  letter-spacing:0.05em;
+}
+.url-status.set{color:var(--pass);}
+
+details summary{
+  cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:12px;
+  letter-spacing:0.1em;
+  color:var(--accent3);
+  text-transform:uppercase;
+  margin-top:10px;
+  outline:none;
+  user-select:none;
+}
+.setup-step{
+  font-size:12px;
+  color:var(--muted);
+  margin:8px 0 4px 12px;
+  line-height:1.65;
+}
+.code-block{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  padding:12px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--accent);
+  margin:8px 0 8px 12px;
+  border-radius:2px;
+  overflow-x:auto;
+  white-space:pre;
+  line-height:1.6;
+}
+
+/* ═══ THANK YOU SCREEN ═══ */
+#screen-thanks{
+  min-height:100vh;
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:40px 16px;
+}
+#screen-thanks.active{display:flex;}
+
+.thanks-icon{font-size:48px;margin-bottom:24px;}
+.thanks-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(42px,10vw,72px);
+  letter-spacing:0.06em;
+  color:var(--accent);
+  line-height:1;
+  margin-bottom:12px;
+}
+.thanks-sub{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px;
+  letter-spacing:0.15em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:20px;
+}
+.thanks-msg{
+  font-size:14px;
+  color:var(--muted);
+  max-width:380px;
+  line-height:1.7;
+}
+
+/* ═══ ADMIN RESULT PANEL ═══ */
+.admin-result{
+  display:none;
+  margin-top:40px;
+  background:var(--panel);
+  border:1px solid var(--border2);
+  border-radius:2px;
+  overflow:hidden;
+}
+.admin-result.show{display:block;}
+.ar-header{
+  background:var(--panel2);
+  padding:20px 24px;
+  border-bottom:1px solid var(--border);
+}
+.ar-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.25em;
+  color:var(--accent3);
+  margin-bottom:10px;
+  text-transform:uppercase;
+}
+.ar-verdict{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,8vw,60px);
+  letter-spacing:0.08em;
+  line-height:1;
+}
+.ar-verdict.pass{color:var(--pass);text-shadow:0 0 30px rgba(0,201,167,0.3);}
+.ar-verdict.fail{color:var(--fail);text-shadow:0 0 30px rgba(255,68,68,0.3);}
+.ar-score{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(52px,12vw,80px);
+  line-height:1;
+  margin:4px 0;
+}
+.ar-score.pass{color:var(--pass);}
+.ar-score.fail{color:var(--fail);}
+.ar-note{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:0.08em;
+}
+.ar-body{padding:20px 24px;background:var(--bg2);}
+.ar-sections{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:20px;
+}
+@media(max-width:480px){.ar-sections{grid-template-columns:1fr;}}
+.ar-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:14px 16px;
+  border-radius:2px;
+  position:relative;
+  overflow:hidden;
+}
+.ar-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.ar-card.pass::before{background:var(--pass);}
+.ar-card.fail::before{background:var(--fail);}
+.ar-card-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;
+  letter-spacing:0.12em;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.ar-card-score{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:30px;
+  line-height:1;
+}
+.ar-card-score.pass{color:var(--pass);}
+.ar-card-score.fail{color:var(--fail);}
+.ar-bar-bg{height:3px;background:var(--border);border-radius:1px;margin-top:8px;overflow:hidden;}
+.ar-bar-fill{height:100%;border-radius:1px;transition:width 0.9s ease;width:0%;}
+.ar-bar-fill.pass{background:var(--pass);}
+.ar-bar-fill.fail{background:var(--fail);}
+.crit-notice{
+  background:rgba(255,68,68,0.07);
+  border:1px solid rgba(255,68,68,0.25);
+  padding:12px 16px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--fail);
+  letter-spacing:0.05em;
+  margin-bottom:16px;
+  display:none;
+  line-height:1.7;
+}
+
+/* SUBMIT STATUS */
+#submit-status{
+  margin-top:14px;
+  padding:12px 16px;
+  border-radius:2px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.08em;
+  display:none;
+  text-align:center;
+}
+#submit-status.ok{background:rgba(0,201,167,0.08);border:1px solid rgba(0,201,167,0.25);color:var(--pass);}
+#submit-status.err{background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.25);color:var(--fail);}
+
+/* DYNAMIC SECTIONS */
+.role-section{display:none;}
+.role-section.show{display:block;}
+
+/* HELPERS */
+.mt8{margin-top:8px;}
+.mt16{margin-top:16px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     LANDING — ROLE SELECTION
+═══════════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+<div class="wrap">
+
+  <!-- NDA / CONFIDENTIALITY NOTICE -->
+  <div style="padding-top:24px;">
+    <div style="
+      background:rgba(255,107,43,0.07);
+      border:1px solid rgba(255,107,43,0.3);
+      border-left:3px solid #ff6b2b;
+      padding:14px 18px;
+      border-radius:2px;
+      margin-bottom:0;
+    ">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.25em;color:#ff6b2b;text-transform:uppercase;margin-bottom:6px;">⚠ Confidentiality Agreement</div>
+      <p style="font-size:12px;color:var(--muted);line-height:1.7;margin:0;">
+        By participating in this evaluation and submitting your responses, you agree to <strong style="color:var(--text);">keep all information regarding the C.A.R.L. system strictly confidential</strong>. This includes the product concept, design, features, and any materials shown to you during this session. Do not share, discuss, photograph, or reproduce any details of this product with any third party.
+      </p>
+    </div>
+  </div>
+
+  <div style="padding-top:32px;">
+    <div class="landing-tag">Concept Validation Protocol — v2.0</div>
+    <div class="landing-title"><span>C.A.R.L.</span><br>EVALUATION</div>
+    <div class="landing-sub">Combat Adaptive Rifle Light / Laser</div>
+
+    <div class="landing-intro">
+      You are evaluating a <strong>3D-printed concept prototype</strong> of the C.A.R.L. system — a modular weapon-mounted platform designed to consolidate laser targeting, illumination, and comms into a single handguard-integrated unit.<br><br>
+      This is a <strong>feasibility evaluation</strong>, not a live-fire test. <strong style="color:#ff6b2b;">Note: The light and laser are functional on this prototype. The comms button is physically present but has no active internals — evaluate its placement and reach only, not signal performance.</strong> Answer based on what you can physically assess and what you'd conceptually expect from a finished system.
+    </div>
+
+    <div class="role-label">Select your background to begin</div>
+
+    <div class="role-cards">
+      <div class="role-card mil" onclick="selectRole('mil')">
+        <div class="role-icon">🎖️</div>
+        <div class="role-info">
+          <div class="role-name">Military Operator</div>
+          <div class="role-desc">Active duty, veteran, or special operations background. Assessment focuses on tactical feasibility, operator concerns, and field viability.</div>
+        </div>
+      </div>
+      <div class="role-card le" onclick="selectRole('le')">
+        <div class="role-icon">🔵</div>
+        <div class="role-info">
+          <div class="role-name">Law Enforcement</div>
+          <div class="role-desc">LE officer, detective, or tactical unit member. Assessment focuses on patrol usability, CQB suitability, and operational practicality.</div>
+        </div>
+      </div>
+      <div class="role-card civ" onclick="selectRole('civ')">
+        <div class="role-icon">🎯</div>
+        <div class="role-info">
+          <div class="role-name">Civilian / Enthusiast</div>
+          <div class="role-desc">Competitive shooter, home defender, or firearms enthusiast. Assessment focuses on usability, modularity appeal, and purchase intent.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sheets config on landing -->
+    <div class="sheets-config">
+      <div class="sheets-title">⚡ Google Sheet Connection</div>
+      <div class="sheets-row">
+        <input type="url" class="sheets-input" id="sheets-url" placeholder="https://script.google.com/macros/s/.../exec" />
+        <button class="btn-save-url" onclick="saveSheetUrl()">Save</button>
+      </div>
+      <div class="url-status" id="url-status">No URL configured — results shown on-screen only.</div>
+      <details>
+        <summary>▸ 2-minute setup instructions</summary>
+        <div class="setup-step">1. Go to <strong>script.google.com</strong> → New Project</div>
+        <div class="setup-step">2. Paste this code and replace YOUR_SHEET_ID:</div>
+        <div class="code-block">function doPost(e) {
+  var sheet = SpreadsheetApp
+    .openById('YOUR_SHEET_ID')
+    .getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  var keys = Object.keys(data);
+  if (sheet.getLastRow() === 0) sheet.appendRow(keys);
+  sheet.appendRow(keys.map(k => data[k]));
+  return ContentService
+    .createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}</div>
+        <div class="setup-step">3. Deploy → Web App → Execute as Me → Anyone → Deploy → Copy URL</div>
+      </details>
+    </div>
+
+    <button class="btn-start" id="btn-start" onclick="startSurvey()">BEGIN EVALUATION →</button>
+  </div><!-- /padding-top:32px -->
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SURVEY
+═══════════════════════════════════ -->
+<div id="screen-survey" class="screen">
+
+  <!-- STICKY TOP BAR -->
+  <div class="sticky-top">
+    <div class="sticky-inner">
+      <div class="sticky-title">C.A.R.L. EVAL</div>
+      <div class="progress-wrap">
+        <div class="progress-bg"><div class="progress-fill" id="prog-fill"></div></div>
+        <div class="progress-pct" id="prog-pct">0% complete</div>
+      </div>
+      <button class="btn-admin" onclick="toggleAdmin()">⬡ ADMIN</button>
+    </div>
+    <!-- ADMIN DRAWER -->
+    <div class="admin-drawer-wrap" id="admin-drawer-wrap" style="display:none;">
+    <div class="admin-drawer open" id="admin-drawer" style="max-width:720px;margin:0 auto;">
+      <div id="admin-pin-gate">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);letter-spacing:0.15em;margin-bottom:8px;">ADMINISTRATOR ACCESS</div>
+        <div class="admin-pin-row">
+          <input type="password" id="admin-pin" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')checkPin()"/>
+          <button class="btn-pin" onclick="checkPin()">Unlock</button>
+        </div>
+        <div class="pin-err" id="pin-err">Incorrect PIN</div>
+      </div>
+      <div id="admin-content" style="display:none;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);letter-spacing:0.15em;margin-bottom:10px;">LIVE SCORES — ADMIN ONLY</div>
+        <div class="admin-scores-grid" id="admin-scores-grid"></div>
+      </div>
+    </div>
+    </div><!-- /admin-drawer-wrap -->
+  </div>
+
+  <div class="wrap">
+
+    <!-- SURVEY HEADER -->
+    <div class="survey-header">
+      <div class="survey-role-badge" id="role-badge">—</div>
+      <div class="survey-title"><span>C.A.R.L.</span> Concept<br>Feasibility Survey</div>
+      <p class="survey-note">
+        <strong>Remember:</strong> This is a 3D-printed prototype — you're evaluating the <em>concept</em>, not a finished product.
+        Share your honest impressions of what you can physically assess, and your expectations for a production version of this system.
+      </p>
+    </div>
+
+    <form id="carl-form" novalidate>
+
+    <!-- RESPONDENT INFO (shared) -->
+    <div class="resp-block">
+      <div class="resp-block-title">Your Profile</div>
+      <div class="form-2">
+        <div>
+          <label class="f-label">Name or Alias</label>
+          <input class="sel-field" type="text" name="resp_name" placeholder="Optional" style="background:var(--panel2);" />
+        </div>
+        <div>
+          <label class="f-label">Date</label>
+          <input class="sel-field" type="date" name="resp_date" style="background:var(--panel2);" />
+        </div>
+      </div>
+      <div class="form-2">
+        <div>
+          <label class="f-label">Years with Firearms</label>
+          <select class="sel-field" name="resp_experience">
+            <option value="">Select...</option>
+            <option>Less than 2 years</option>
+            <option>2–5 years</option>
+            <option>5–10 years</option>
+            <option>10–20 years</option>
+            <option>20+ years</option>
+          </select>
+        </div>
+        <div>
+          <label class="f-label">Platform Tested On</label>
+          <input class="sel-field" type="text" name="resp_platform" placeholder="e.g. AR-15, M4..." style="background:var(--panel2);" />
+        </div>
+      </div>
+
+      <!-- MILITARY SPECIFIC PROFILE -->
+      <div class="role-section mil-section" id="resp-mil">
+        <div class="form-2">
+          <div>
+            <label class="f-label">Branch / Unit Type</label>
+            <select class="sel-field" name="resp_mil_branch">
+              <option value="">Select...</option>
+              <option>Army Infantry / Armor</option>
+              <option>Army Special Forces</option>
+              <option>Marine Infantry / MARSOC</option>
+              <option>Navy / SEAL</option>
+              <option>Air Force / TACP / PJ</option>
+              <option>Other / Prefer not to say</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label">ATPIAL / Laser Experience</label>
+            <select class="sel-field" name="resp_laser_exp">
+              <option value="">Select...</option>
+              <option>No prior use</option>
+              <option>Limited training use</option>
+              <option>Regular use</option>
+              <option>Extensive operational use</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- LE SPECIFIC PROFILE -->
+      <div class="role-section le-section" id="resp-le">
+        <div class="form-2">
+          <div>
+            <label class="f-label">Unit Type</label>
+            <select class="sel-field" name="resp_le_unit">
+              <option value="">Select...</option>
+              <option>Patrol Officer</option>
+              <option>Detective / Investigator</option>
+              <option>SWAT / Tactical Unit</option>
+              <option>Federal Agent (FBI/DEA/ATF/etc.)</option>
+              <option>Border Patrol / CBP</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label">Weapon Lights / Lasers Used</label>
+            <select class="sel-field" name="resp_le_lights">
+              <option value="">Select...</option>
+              <option>No dedicated setup</option>
+              <option>Standard weapon light only</option>
+              <option>Light + laser combo</option>
+              <option>Full tactical setup (ATPIAL, NVG, PTT)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- CIV SPECIFIC PROFILE -->
+      <div class="role-section civ-section" id="resp-civ">
+        <div class="form-2">
+          <div>
+            <label class="f-label">Primary Use Case</label>
+            <select class="sel-field" name="resp_civ_use">
+              <option value="">Select...</option>
+              <option>Home defense</option>
+              <option>Recreational / Range shooting</option>
+              <option>Competitive shooting</option>
+              <option>Hunting</option>
+              <option>Collection / Enthusiast</option>
+            </select>
+          </div>
+          <div>
+            <label class="f-label">Current Accessories Spend</label>
+            <select class="sel-field" name="resp_civ_spend">
+              <option value="">Select...</option>
+              <option>Under $200</option>
+              <option>$200–$500</option>
+              <option>$500–$1,000</option>
+              <option>$1,000–$2,000</option>
+              <option>Over $2,000</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div><!-- /resp-block -->
+
+    <!-- ═══════════════════════════════
+         SECTION 1 — PHYSICAL CONCEPT
+         (Shared across all roles)
+    ════════════════════════════════ -->
+    <div class="s-block" data-section="1">
+      <div class="s-header s-accent-1">
+        <div class="s-num">01</div>
+        <div>
+          <div class="s-name">Physical Form & Concept Design</div>
+          <div class="s-sub">Based on the 3D-printed model — form factor, size, grip, weight concept, aesthetics</div>
+        </div>
+      </div>
+      <div class="s-body">
+
+        <div class="q">
+          <div class="q-text">Looking at and holding the prototype, how well does the physical form factor of the C.A.R.L. seem suited to a weapon-mounted application?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2)</div>
+          <div class="likert" data-section="1" data-weight="2" data-name="s1_form_factor">
+            <div class="lik-opt"><input type="radio" name="s1_form_factor" value="1" id="s1ff1"><label for="s1ff1"><span class="lik-n">1</span><span class="lik-d">Too bulky / Wrong shape</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_form_factor" value="2" id="s1ff2"><label for="s1ff2"><span class="lik-n">2</span><span class="lik-d">Significant concerns</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_form_factor" value="3" id="s1ff3"><label for="s1ff3"><span class="lik-n">3</span><span class="lik-d">Reasonable concept</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_form_factor" value="4" id="s1ff4"><label for="s1ff4"><span class="lik-n">4</span><span class="lik-d">Good proportions</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_form_factor" value="5" id="s1ff5"><label for="s1ff5"><span class="lik-n">5</span><span class="lik-d">Excellent fit concept</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">How does the size and weight distribution of this prototype feel in relation to your normal weapon setup? Would the concept add problematic bulk?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2)</div>
+          <div class="likert" data-section="1" data-weight="2" data-name="s1_weight_concept">
+            <div class="lik-opt"><input type="radio" name="s1_weight_concept" value="1" id="s1wc1"><label for="s1wc1"><span class="lik-n">1</span><span class="lik-d">Way too heavy conceptually</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_weight_concept" value="2" id="s1wc2"><label for="s1wc2"><span class="lik-n">2</span><span class="lik-d">Likely too heavy</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_weight_concept" value="3" id="s1wc3"><label for="s1wc3"><span class="lik-n">3</span><span class="lik-d">Acceptable if consolidated</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_weight_concept" value="4" id="s1wc4"><label for="s1wc4"><span class="lik-n">4</span><span class="lik-d">Reasonable tradeoff</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_weight_concept" value="5" id="s1wc5"><label for="s1wc5"><span class="lik-n">5</span><span class="lik-d">Weight consolidation makes sense</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Based on holding this prototype, does the grip geometry seem like it would allow a natural hand position without forcing changes to your shooting stance?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2) — Core ergonomic feasibility</div>
+          <div class="likert" data-section="1" data-weight="2" data-name="s1_grip">
+            <div class="lik-opt"><input type="radio" name="s1_grip" value="1" id="s1g1"><label for="s1g1"><span class="lik-n">1</span><span class="lik-d">Would force grip changes</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_grip" value="2" id="s1g2"><label for="s1g2"><span class="lik-n">2</span><span class="lik-d">Concerns about grip</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_grip" value="3" id="s1g3"><label for="s1g3"><span class="lik-n">3</span><span class="lik-d">Mostly natural</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_grip" value="4" id="s1g4"><label for="s1g4"><span class="lik-n">4</span><span class="lik-d">Good hand position concept</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_grip" value="5" id="s1g5"><label for="s1g5"><span class="lik-n">5</span><span class="lik-d">Natural and intuitive</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Rate the button layout concept — based on placement and spacing, do you think you could operate the 6-button interface without removing your hand from the weapon?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2) — Central to the C.A.R.L. value proposition</div>
+          <div class="likert" data-section="1" data-weight="2" data-name="s1_buttons">
+            <div class="lik-opt"><input type="radio" name="s1_buttons" value="1" id="s1b1"><label for="s1b1"><span class="lik-n">1</span><span class="lik-d">Not feasible</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_buttons" value="2" id="s1b2"><label for="s1b2"><span class="lik-n">2</span><span class="lik-d">Probably requires hand removal</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_buttons" value="3" id="s1b3"><label for="s1b3"><span class="lik-n">3</span><span class="lik-d">Maybe with practice</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_buttons" value="4" id="s1b4"><label for="s1b4"><span class="lik-n">4</span><span class="lik-d">Likely achievable</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_buttons" value="5" id="s1b5"><label for="s1b5"><span class="lik-n">5</span><span class="lik-d">Clearly within reach</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Locate the PTT (Push-to-Talk) comms button on the prototype. Based on its physical placement and size, do you think you could press it reliably without breaking your firing grip?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2) — Button placement only, no active comms to test</div>
+          <div class="likert" data-section="1" data-weight="2" data-name="s1_ptt_placement">
+            <div class="lik-opt"><input type="radio" name="s1_ptt_placement" value="1" id="s1pt1"><label for="s1pt1"><span class="lik-n">1</span><span class="lik-d">Can't reach without grip break</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_ptt_placement" value="2" id="s1pt2"><label for="s1pt2"><span class="lik-n">2</span><span class="lik-d">Awkward — needs repositioning</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_ptt_placement" value="3" id="s1pt3"><label for="s1pt3"><span class="lik-n">3</span><span class="lik-d">Reachable with some effort</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_ptt_placement" value="4" id="s1pt4"><label for="s1pt4"><span class="lik-n">4</span><span class="lik-d">Good placement</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_ptt_placement" value="5" id="s1pt5"><label for="s1pt5"><span class="lik-n">5</span><span class="lik-d">Natural and immediately accessible</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Can you distinguish the PTT button from the other controls by touch alone — without looking at the unit?</div>
+          <div class="q-hint">WEIGHT: STANDARD (×1) — Tactile differentiation</div>
+          <div class="binary" data-section="1" data-name="s1_ptt_tactile">
+            <div class="bin-opt bin-yes"><input type="radio" name="s1_ptt_tactile" value="yes" id="s1ptt_y"><label for="s1ptt_y">Yes — distinguishable</label></div>
+            <div class="bin-opt bin-no"><input type="radio" name="s1_ptt_tactile" value="no" id="s1ptt_n"><label for="s1ptt_n">No — feels like the others</label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">How would you change the comms button — its position, size, shape, or tactile feedback — to make it more reliable under stress?</div>
+          <textarea class="open-field" name="s1_ptt_feedback" placeholder="Move it forward / back? Larger surface? Raised guard to prevent accidental press? Different texture?"></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">How do you rate the visual design and aesthetics of the unit? Does it look like a serious piece of kit or a toy?</div>
+          <div class="q-hint">WEIGHT: STANDARD (×1)</div>
+          <div class="likert" data-section="1" data-weight="1" data-name="s1_aesthetics">
+            <div class="lik-opt"><input type="radio" name="s1_aesthetics" value="1" id="s1a1"><label for="s1a1"><span class="lik-n">1</span><span class="lik-d">Looks like a toy</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_aesthetics" value="2" id="s1a2"><label for="s1a2"><span class="lik-n">2</span><span class="lik-d">Needs work</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_aesthetics" value="3" id="s1a3"><label for="s1a3"><span class="lik-n">3</span><span class="lik-d">Acceptable</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_aesthetics" value="4" id="s1a4"><label for="s1a4"><span class="lik-n">4</span><span class="lik-d">Looks professional</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s1_aesthetics" value="5" id="s1a5"><label for="s1a5"><span class="lik-n">5</span><span class="lik-d">Looks like serious kit</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">What specific physical changes would you make to the form, button layout, size, or shape of this prototype?</div>
+          <textarea class="open-field" name="s1_physical_feedback" placeholder="Be specific — button positions, overall length, grip texture, where you'd move things, anything that felt off when you held it..."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         SECTION 2 — CONCEPT FEASIBILITY
+         (Shared across all roles)
+    ════════════════════════════════ -->
+    <div class="s-block" data-section="2">
+      <div class="s-header s-accent-2">
+        <div class="s-num">02</div>
+        <div>
+          <div class="s-name">Core Concept Assessment</div>
+          <div class="s-sub">Evaluating the idea itself — consolidation, value, and what you'd expect from a finished unit</div>
+        </div>
+      </div>
+      <div class="s-body">
+
+        <div class="q">
+          <div class="q-text">The C.A.R.L. concept replaces separate accessories — ATPIAL/laser, illumination, and additional modules — with a single integrated handguard unit. How compelling is this consolidation concept to you?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2)</div>
+          <div class="likert" data-section="2" data-weight="2" data-name="s2_consolidation">
+            <div class="lik-opt"><input type="radio" name="s2_consolidation" value="1" id="s2c1"><label for="s2c1"><span class="lik-n">1</span><span class="lik-d">Not compelling at all</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s2_consolidation" value="2" id="s2c2"><label for="s2c2"><span class="lik-n">2</span><span class="lik-d">Somewhat interesting</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s2_consolidation" value="3" id="s2c3"><label for="s2c3"><span class="lik-n">3</span><span class="lik-d">Good idea</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s2_consolidation" value="4" id="s2c4"><label for="s2c4"><span class="lik-n">4</span><span class="lik-d">Very compelling</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s2_consolidation" value="5" id="s2c5"><label for="s2c5"><span class="lik-n">5</span><span class="lik-d">This is exactly what's needed</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">How realistic do you think it is for a production version of C.A.R.L. to actually deliver on its full promise — LEP laser, IR illumination, rangefinder, and a complete modular accessory platform in one unit?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2)</div>
+          <div class="likert" data-section="2" data-weight="2" data-name="s2_feasibility">
+            <div class="lik-opt"><input type="radio" name="s2_feasibility" value="1" id="s2f1"><label for="s2f1"><span class="lik-n">1</span><span class="lik-d">Not believable</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s2_feasibility" value="2" id="s2f2"><label for="s2f2"><span class="lik-n">2</span><span class="lik-d">Significant doubts</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s2_feasibility" value="3" id="s2f3"><label for="s2f3"><span class="lik-n">3</span><span class="lik-d">Possible with right execution</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s2_feasibility" value="4" id="s2f4"><label for="s2f4"><span class="lik-n">4</span><span class="lik-d">Believable and achievable</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s2_feasibility" value="5" id="s2f5"><label for="s2f5"><span class="lik-n">5</span><span class="lik-d">Totally believable</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">What is your BIGGEST concern about this concept? What would have to be true for you to trust it fully?</div>
+          <textarea class="open-field tall" name="s2_biggest_concern" placeholder="Don't hold back — reliability, battery life, size, price, laser performance, comms quality, something else?"></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">What would you ADD to this concept that isn't currently included — something that would make it a must-have?</div>
+          <textarea class="open-field" name="s2_missing_feature" placeholder="Features, integrations, capabilities — what's missing?"></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         SECTION 3 — MILITARY TRACK
+    ════════════════════════════════ -->
+    <div class="s-block role-section mil-section" data-section="3" id="sec-mil">
+      <div class="s-header s-accent-3">
+        <div class="s-num">03</div>
+        <div>
+          <div class="s-name">Operator Assessment</div>
+          <div class="s-sub">Tactical feasibility, field trust, and operational comparison</div>
+        </div>
+      </div>
+      <div class="s-body">
+
+        <div class="q">
+          <div class="q-text">Thinking about your operational experience — would a consolidated system like this have been an advantage in any missions or environments you've operated in?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2)</div>
+          <div class="likert" data-section="3" data-weight="2" data-name="s3_mil_op_advantage">
+            <div class="lik-opt"><input type="radio" name="s3_mil_op_advantage" value="1" id="s3ma1"><label for="s3ma1"><span class="lik-n">1</span><span class="lik-d">No — my current setup works</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_mil_op_advantage" value="2" id="s3ma2"><label for="s3ma2"><span class="lik-n">2</span><span class="lik-d">Marginal advantage</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_mil_op_advantage" value="3" id="s3ma3"><label for="s3ma3"><span class="lik-n">3</span><span class="lik-d">Some environments yes</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_mil_op_advantage" value="4" id="s3ma4"><label for="s3ma4"><span class="lik-n">4</span><span class="lik-d">Clear advantage in most ops</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_mil_op_advantage" value="5" id="s3ma5"><label for="s3ma5"><span class="lik-n">5</span><span class="lik-d">Would have been a game changer</span></label></div>
+          </div>
+        </div>
+
+        
+
+        <div class="q">
+          <div class="q-text">What would you need to see in a working prototype before you'd trust this system in a live operational environment?</div>
+          <textarea class="open-field tall" name="s3_mil_trust_reqs" placeholder="Durability standards? Zero retention testing? Battery life requirements? Interoperability with specific comms systems? What's your checklist?"></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">What is the most likely scenario where this system would FAIL or become a liability in the field?</div>
+          <textarea class="open-field" name="s3_mil_failure_scenario" placeholder="Think about worst case — environment, battery failure, accidental activation, zero shift under recoil, mounting failure..."></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Would you advocate for your unit to field test a working version of this system?</div>
+          <div class="binary" data-section="3" data-name="s3_mil_advocate">
+            <div class="bin-opt bin-yes"><input type="radio" name="s3_mil_advocate" value="yes" id="s3av_y"><label for="s3av_y">Yes</label></div>
+            <div class="bin-opt bin-no"><input type="radio" name="s3_mil_advocate" value="no" id="s3av_n"><label for="s3av_n">No</label></div>
+            <div class="bin-opt bin-neu"><input type="radio" name="s3_mil_advocate" value="maybe" id="s3av_m"><label for="s3av_m">Depends on working demo</label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Any other thoughts — mission types where this excels, comparisons to current kit, things the team needs to hear?</div>
+          <textarea class="open-field" name="s3_mil_final" placeholder="Open feedback..."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         SECTION 3 — LAW ENFORCEMENT TRACK
+    ════════════════════════════════ -->
+    <div class="s-block role-section le-section" data-section="3" id="sec-le">
+      <div class="s-header s-accent-3">
+        <div class="s-num">03</div>
+        <div>
+          <div class="s-name">Operational Suitability</div>
+          <div class="s-sub">Patrol usability, tactical readiness, and procurement interest</div>
+        </div>
+      </div>
+      <div class="s-body">
+
+        <div class="q">
+          <div class="q-text">How well do you think this concept would suit your day-to-day operational environment — patrol car, CQB entry, plainclothes, or range training?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2)</div>
+          <div class="likert" data-section="3" data-weight="2" data-name="s3_le_suitability">
+            <div class="lik-opt"><input type="radio" name="s3_le_suitability" value="1" id="s3ls1"><label for="s3ls1"><span class="lik-n">1</span><span class="lik-d">Not suitable</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_le_suitability" value="2" id="s3ls2"><label for="s3ls2"><span class="lik-n">2</span><span class="lik-d">Limited use case</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_le_suitability" value="3" id="s3ls3"><label for="s3ls3"><span class="lik-n">3</span><span class="lik-d">Works for specific roles</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_le_suitability" value="4" id="s3ls4"><label for="s3ls4"><span class="lik-n">4</span><span class="lik-d">Broadly applicable</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_le_suitability" value="5" id="s3ls5"><label for="s3ls5"><span class="lik-n">5</span><span class="lik-d">Ideal for LE use</span></label></div>
+          </div>
+        </div>
+
+
+
+        <div class="q">
+          <div class="q-text">What would your agency's procurement process need to see before considering this system? What certifications, tests, or standards would it need to meet?</div>
+          <textarea class="open-field tall" name="s3_le_procurement" placeholder="MIL-SPEC standards? FBI/DOJ certifications? Specific environmental tests? Budget range your agency could consider? Training requirements?"></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">What is your primary concern about using this on duty? What would prevent you from recommending this to your department?</div>
+          <textarea class="open-field" name="s3_le_concern" placeholder="Reliability? Liability? Training curve? Cost? Compatibility with existing radio systems?"></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Would you personally push to have a working version evaluated by your department or tactical unit?</div>
+          <div class="binary" data-section="3" data-name="s3_le_recommend">
+            <div class="bin-opt bin-yes"><input type="radio" name="s3_le_recommend" value="yes" id="s3lr_y"><label for="s3lr_y">Yes</label></div>
+            <div class="bin-opt bin-no"><input type="radio" name="s3_le_recommend" value="no" id="s3lr_n"><label for="s3lr_n">No</label></div>
+            <div class="bin-opt bin-neu"><input type="radio" name="s3_le_recommend" value="maybe" id="s3lr_m"><label for="s3lr_m">After seeing it work</label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Any additional thoughts, comparisons to current duty gear, or feedback the development team should know?</div>
+          <textarea class="open-field" name="s3_le_final" placeholder="Open feedback..."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         SECTION 3 — CIVILIAN TRACK
+    ════════════════════════════════ -->
+    <div class="s-block role-section civ-section" data-section="3" id="sec-civ">
+      <div class="s-header s-accent-3">
+        <div class="s-num">03</div>
+        <div>
+          <div class="s-name">Usability & Purchase Intent</div>
+          <div class="s-sub">Modularity appeal, practical value, and what you'd actually pay</div>
+        </div>
+      </div>
+      <div class="s-body">
+
+        <div class="q">
+          <div class="q-text">How appealing is the idea of ONE modular system replacing your separate light, laser, and comms accessories? Does this solve a real problem you have?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2)</div>
+          <div class="likert" data-section="3" data-weight="2" data-name="s3_civ_appeal">
+            <div class="lik-opt"><input type="radio" name="s3_civ_appeal" value="1" id="s3ca1"><label for="s3ca1"><span class="lik-n">1</span><span class="lik-d">I don't need this</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_appeal" value="2" id="s3ca2"><label for="s3ca2"><span class="lik-n">2</span><span class="lik-d">Mildly interesting</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_appeal" value="3" id="s3ca3"><label for="s3ca3"><span class="lik-n">3</span><span class="lik-d">Interesting concept</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_appeal" value="4" id="s3ca4"><label for="s3ca4"><span class="lik-n">4</span><span class="lik-d">Very appealing</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_appeal" value="5" id="s3ca5"><label for="s3ca5"><span class="lik-n">5</span><span class="lik-d">I want this now</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Compared to your current accessories setup, how would you rate the value proposition of replacing everything with a single C.A.R.L. unit — assuming it performs as described?</div>
+          <div class="q-hint">WEIGHT: HIGH (×2)</div>
+          <div class="likert" data-section="3" data-weight="2" data-name="s3_civ_value">
+            <div class="lik-opt"><input type="radio" name="s3_civ_value" value="1" id="s3cv1"><label for="s3cv1"><span class="lik-n">1</span><span class="lik-d">Not worth it</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_value" value="2" id="s3cv2"><label for="s3cv2"><span class="lik-n">2</span><span class="lik-d">Marginal value</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_value" value="3" id="s3cv3"><label for="s3cv3"><span class="lik-n">3</span><span class="lik-d">Comparable value</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_value" value="4" id="s3cv4"><label for="s3cv4"><span class="lik-n">4</span><span class="lik-d">Better value</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_value" value="5" id="s3cv5"><label for="s3cv5"><span class="lik-n">5</span><span class="lik-d">Much better value</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">How easy do you think this system would be to set up, configure, and use without needing professional training?</div>
+          <div class="q-hint">WEIGHT: STANDARD (×1)</div>
+          <div class="likert" data-section="3" data-weight="1" data-name="s3_civ_ease">
+            <div class="lik-opt"><input type="radio" name="s3_civ_ease" value="1" id="s3ce1"><label for="s3ce1"><span class="lik-n">1</span><span class="lik-d">Too complex</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_ease" value="2" id="s3ce2"><label for="s3ce2"><span class="lik-n">2</span><span class="lik-d">Needs training</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_ease" value="3" id="s3ce3"><label for="s3ce3"><span class="lik-n">3</span><span class="lik-d">Average learning curve</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_ease" value="4" id="s3ce4"><label for="s3ce4"><span class="lik-n">4</span><span class="lik-d">Pretty intuitive</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s3_civ_ease" value="5" id="s3ce5"><label for="s3ce5"><span class="lik-n">5</span><span class="lik-d">Plug-and-play</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">What is the maximum price you would pay for a fully-configured C.A.R.L. system that delivers on everything it promises?</div>
+          <select class="sel-field mt8" name="s3_civ_price">
+            <option value="">Select a price range...</option>
+            <option>Under $500</option>
+            <option>$500–$1,000</option>
+            <option>$1,000–$1,500</option>
+            <option>$1,500–$2,000</option>
+            <option>$2,000–$3,000</option>
+            <option>$3,000–$3,500</option>
+            <option>Over $3,500 if performance justifies</option>
+          </select>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Would you buy this if it were available today at a competitive price?</div>
+          <div class="binary" data-section="3" data-name="s3_civ_buy">
+            <div class="bin-opt bin-yes"><input type="radio" name="s3_civ_buy" value="yes" id="s3cb_y"><label for="s3cb_y">Yes, immediately</label></div>
+            <div class="bin-opt bin-no"><input type="radio" name="s3_civ_buy" value="no" id="s3cb_n"><label for="s3cb_n">No</label></div>
+            <div class="bin-opt bin-neu"><input type="radio" name="s3_civ_buy" value="maybe" id="s3cb_m"><label for="s3cb_m">After seeing reviews</label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">What would stop you from buying this — what's your dealbreaker?</div>
+          <textarea class="open-field" name="s3_civ_dealbreaker" placeholder="Price? Brand trust? Specific feature missing? Compatibility? Something else?"></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">What would make you immediately buy this AND tell everyone you know about it?</div>
+          <textarea class="open-field" name="s3_civ_wow" placeholder="The 'wow factor' — what would make this a must-have in the community?"></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════
+         SECTION 4 — FINAL (Shared)
+    ════════════════════════════════ -->
+    <div class="s-block" data-section="4">
+      <div class="s-header s-accent-4">
+        <div class="s-num">04</div>
+        <div>
+          <div class="s-name">Overall Verdict</div>
+          <div class="s-sub">Your summary assessment of the C.A.R.L. concept</div>
+        </div>
+      </div>
+      <div class="s-body">
+
+        <div class="q">
+          <div class="q-text">Overall, how would you rate this concept as a product worth developing and bringing to market?</div>
+          <div class="q-hint">WEIGHT: CRITICAL (×3)</div>
+          <div class="likert" data-section="4" data-weight="3" data-name="s4_overall">
+            <div class="lik-opt"><input type="radio" name="s4_overall" value="1" id="s4o1"><label for="s4o1"><span class="lik-n">1</span><span class="lik-d">Don't develop this</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s4_overall" value="2" id="s4o2"><label for="s4o2"><span class="lik-n">2</span><span class="lik-d">Major rethink needed</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s4_overall" value="3" id="s4o3"><label for="s4o3"><span class="lik-n">3</span><span class="lik-d">Promising — needs refinement</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s4_overall" value="4" id="s4o4"><label for="s4o4"><span class="lik-n">4</span><span class="lik-d">Strong concept — pursue it</span></label></div>
+            <div class="lik-opt"><input type="radio" name="s4_overall" value="5" id="s4o5"><label for="s4o5"><span class="lik-n">5</span><span class="lik-d">Build this — I need it</span></label></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="q-text">List the TOP 3 things the C.A.R.L. concept gets RIGHT.</div>
+          <textarea class="open-field" name="s4_top3_right" placeholder="1.&#10;2.&#10;3."></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">List the TOP 3 things that MUST change before this is ready for production.</div>
+          <textarea class="open-field" name="s4_top3_change" placeholder="1.&#10;2.&#10;3."></textarea>
+        </div>
+
+        <div class="q">
+          <div class="q-text">Final thoughts — anything the development team needs to hear that wasn't asked?</div>
+          <textarea class="open-field tall" name="s4_final_thoughts" placeholder="Be direct. Your honest assessment matters more than being nice."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-wrap">
+      <button type="button" class="btn-submit" onclick="submitSurvey()" id="btn-submit">SUBMIT EVALUATION</button>
+      <div class="submit-note">Your responses will be recorded securely. You will not see a score.</div>
+      <div id="submit-status"></div>
+    </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     THANK YOU SCREEN
+═══════════════════════════════════ -->
+<div id="screen-thanks" class="screen">
+  <div class="thanks-icon">✓</div>
+  <div class="thanks-title">Thank You</div>
+  <div class="thanks-sub">Evaluation Recorded</div>
+  <p class="thanks-msg">Your feedback has been submitted. Your assessment plays a direct role in determining the future of this product. We appreciate your time and honesty.</p>
+
+  <!-- ADMIN RESULT — PIN protected, hidden by default -->
+  <div style="width:100%;max-width:680px;margin-top:40px;padding:0 16px;" id="admin-result-wrap">
+    <div style="text-align:center;margin-bottom:16px;">
+      <button class="btn-admin" onclick="toggleAdminResult()" style="font-size:11px;padding:8px 16px;">⬡ VIEW ADMIN RESULTS</button>
+    </div>
+    <div id="admin-result-gate" style="display:none;">
+      <div class="admin-drawer open" style="margin:0 0 16px;">
+        <div id="ar-pin-gate">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--accent3);letter-spacing:0.15em;margin-bottom:8px;">ADMINISTRATOR ACCESS</div>
+          <div class="admin-pin-row">
+            <input type="password" id="ar-pin" maxlength="6" placeholder="••••" onkeydown="if(event.key==='Enter')checkResultPin()"/>
+            <button class="btn-pin" onclick="checkResultPin()">Unlock</button>
+          </div>
+          <div class="pin-err" id="ar-pin-err">Incorrect PIN</div>
+        </div>
+        <div id="ar-content" style="display:none;">
+          <div class="admin-result show" id="admin-result-panel">
+            <div class="ar-header">
+              <div class="ar-tag">C.A.R.L. CONCEPT VALIDATION — ADMIN RESULT</div>
+              <div class="ar-verdict" id="ar-verdict">—</div>
+              <div class="ar-score" id="ar-score">—</div>
+              <div class="ar-note">Threshold: 80% &nbsp;|&nbsp; Role: <span id="ar-role">—</span></div>
+            </div>
+            <div class="ar-body">
+              <div class="crit-notice" id="crit-notice"></div>
+              <div class="ar-sections" id="ar-sections"></div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);text-align:center;letter-spacing:0.08em;">
+                Submitted: <span id="ar-timestamp">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════
+// STATE
+// ════════════════════════════════
+let selectedRole = null;
+let adminUnlocked = false;
+let surveyResult = null;
+const ADMIN_PIN = '3322';
+
+let SHEET_URL = localStorage.getItem('carl_sheet_url') || '';
+if (SHEET_URL) {
+  document.getElementById('sheets-url').value = SHEET_URL;
+  document.getElementById('url-status').textContent = '✓ Connected — submissions will go to your Google Sheet.';
+  document.getElementById('url-status').className = 'url-status set';
+}
+
+function saveSheetUrl() {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (url) {
+    SHEET_URL = url;
+    localStorage.setItem('carl_sheet_url', url);
+    document.getElementById('url-status').textContent = '✓ Saved — ready to receive submissions.';
+    document.getElementById('url-status').className = 'url-status set';
+  }
+}
+
+// ════════════════════════════════
+// ROLE SELECTION
+// ════════════════════════════════
+function selectRole(role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`.role-card.${role}`).classList.add('selected');
+  const btn = document.getElementById('btn-start');
+  btn.classList.add('ready');
+}
+
+function startSurvey() {
+  if (!selectedRole) return;
+
+  // Show correct role sections
+  document.querySelectorAll('.role-section').forEach(el => el.classList.remove('show'));
+  document.querySelectorAll(`.${selectedRole}-section`).forEach(el => el.classList.add('show'));
+
+  // Role badge
+  const badgeEl = document.getElementById('role-badge');
+  const roleMap = {mil:'🎖️ Military Operator', le:'🔵 Law Enforcement', civ:'🎯 Civilian / Enthusiast'};
+  badgeEl.textContent = roleMap[selectedRole];
+  badgeEl.className = `survey-role-badge ${selectedRole}`;
+
+  // Switch screens
+  document.getElementById('screen-landing').classList.remove('active');
+  document.getElementById('screen-survey').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════════════
+// PROGRESS
+// ════════════════════════════════
+function updateProgress() {
+  const radios = [...new Set([...document.querySelectorAll('#carl-form input[type="radio"]')]
+    .filter(r => {
+      const section = r.closest('.role-section');
+      return !section || section.classList.contains('show');
+    })
+    .map(r => r.name))];
+
+  let answered = 0;
+  radios.forEach(name => {
+    if (document.querySelector(`input[name="${name}"]:checked`)) answered++;
+  });
+
+  const selects = [...document.querySelectorAll('#carl-form select')].filter(s => s.value).length;
+  const texts = [...document.querySelectorAll('#carl-form input[type="text"], #carl-form input[type="date"]')].filter(i => i.value).length;
+
+  const total = radios.length + 4;
+  const pct = Math.min(100, Math.round(((answered + selects + texts) / total) * 100));
+
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '% complete';
+
+  if (adminUnlocked) updateAdminScores();
+}
+
+document.querySelectorAll('#carl-form input, #carl-form select, #carl-form textarea').forEach(el => {
+  el.addEventListener('change', updateProgress);
+  el.addEventListener('input', updateProgress);
+});
+
+// ════════════════════════════════
+// SCORING ENGINE
+// ════════════════════════════════
+let criticalFails = [];
+
+function calculateScores() {
+  criticalFails = [];
+  const sections = {};
+
+  // Only score sections that are visible
+  const visibleSections = new Set();
+  document.querySelectorAll('.s-block').forEach(block => {
+    const inRoleSection = block.classList.contains('role-section');
+    if (!inRoleSection || block.classList.contains('show')) {
+      const sNum = block.dataset.section;
+      if (sNum) visibleSections.add(sNum);
+    }
+  });
+
+  visibleSections.forEach(s => {
+    sections[s] = { earned: 0, max: 0, name: getSectionName(s) };
+  });
+
+  // Likert
+  document.querySelectorAll('[data-section].likert').forEach(q => {
+    const s = q.dataset.section;
+    if (!visibleSections.has(s)) return;
+    const weight = parseInt(q.dataset.weight || 1);
+    const name = q.dataset.name;
+    const val = document.querySelector(`input[name="${name}"]:checked`);
+    sections[s].max += 5 * weight;
+    if (val) sections[s].earned += parseInt(val.value) * weight;
+  });
+
+  // Binary
+  document.querySelectorAll('[data-section].binary').forEach(q => {
+    const s = q.dataset.section;
+    if (!visibleSections.has(s)) return;
+    const name = q.dataset.name;
+    const val = document.querySelector(`input[name="${name}"]:checked`);
+    sections[s].max += 5;
+    if (val) {
+      const score = val.value === 'yes' ? 5 : val.value === 'maybe' ? 3 : 0;
+      sections[s].earned += score;
+    }
+  });
+
+  return sections;
+}
+
+function getSectionName(s) {
+  const names = {
+    '1': 'Physical Form',
+    '2': 'Core Concept',
+    '3': selectedRole === 'mil' ? 'Operator Assessment' : selectedRole === 'le' ? 'LE Suitability' : 'Purchase Intent',
+    '4': 'Overall Verdict'
+  };
+  return names[s] || `Section ${s}`;
+}
+
+// ════════════════════════════════
+// ADMIN PANEL (survey screen)
+// ════════════════════════════════
+function toggleAdmin() {
+  const wrap = document.getElementById('admin-drawer-wrap');
+  const isOpen = wrap.style.display !== 'none';
+  wrap.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen && !adminUnlocked) {
+    setTimeout(() => document.getElementById('admin-pin').focus(), 50);
+  }
+  if (isOpen) {
+    // reset if closing
+    adminUnlocked = false;
+    document.getElementById('admin-pin-gate').style.display = 'block';
+    document.getElementById('admin-content').style.display = 'none';
+    document.getElementById('admin-pin').value = '';
+    document.getElementById('pin-err').style.display = 'none';
+  }
+}
+
+function checkPin() {
+  const val = document.getElementById('admin-pin').value;
+  if (val === ADMIN_PIN) {
+    adminUnlocked = true;
+    document.getElementById('admin-pin-gate').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    updateAdminScores();
+  } else {
+    document.getElementById('pin-err').style.display = 'block';
+    document.getElementById('admin-pin').value = '';
+  }
+}
+
+function updateAdminScores() {
+  if (!adminUnlocked) return;
+  const scores = calculateScores();
+  let totalEarned = 0, totalMax = 0;
+  const grid = document.getElementById('admin-scores-grid');
+  grid.innerHTML = '';
+
+  Object.keys(scores).forEach(s => {
+    const sec = scores[s];
+    totalEarned += sec.earned;
+    totalMax += sec.max;
+    const pct = sec.max > 0 ? Math.round((sec.earned / sec.max) * 100) : 0;
+    const cls = pct >= 80 ? 'p' : 'f';
+    const chip = document.createElement('div');
+    chip.className = 'admin-score-chip';
+    chip.innerHTML = `S${s} ${sec.name}<strong class="${cls}">${pct}%</strong>`;
+    grid.appendChild(chip);
+  });
+
+  const overall = totalMax > 0 ? Math.round((totalEarned / totalMax) * 100) : 0;
+  const validated = overall >= 80;
+  const chip = document.createElement('div');
+  chip.className = 'admin-score-chip';
+  chip.innerHTML = `OVERALL<strong class="${validated?'p':'f'}">${overall}% — ${validated?'PASS':'FAIL'}</strong>`;
+  grid.appendChild(chip);
+}
+
+// ════════════════════════════════
+// SUBMIT
+// ════════════════════════════════
+function submitSurvey() {
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'SUBMITTING...';
+
+  const scores = calculateScores();
+  const timestamp = new Date().toISOString();
+  const formData = { timestamp, role: selectedRole };
+
+  // All form fields
+  document.querySelectorAll('#carl-form input[type="text"], #carl-form input[type="date"], #carl-form select, #carl-form textarea').forEach(el => {
+    if (el.name) formData[el.name] = el.value;
+  });
+  const radioNames = [...new Set([...document.querySelectorAll('#carl-form input[type="radio"]')].map(r => r.name))];
+  radioNames.forEach(name => {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    formData[name] = checked ? checked.value : '';
+  });
+
+  // Scores
+  let totalEarned = 0, totalMax = 0;
+  Object.keys(scores).forEach(s => {
+    const pct = scores[s].max > 0 ? Math.round((scores[s].earned / scores[s].max) * 100) : 0;
+    formData[`section_${s}_score`] = pct + '%';
+    formData[`section_${s}_raw`] = `${scores[s].earned}/${scores[s].max}`;
+    totalEarned += scores[s].earned;
+    totalMax += scores[s].max;
+  });
+
+  const finalPct = totalMax > 0 ? Math.round((totalEarned / totalMax) * 100) : 0;
+  const validated = finalPct >= 80;
+  formData['final_score'] = finalPct + '%';
+  formData['validation_result'] = validated ? 'VALIDATED' : 'FAILED';
+
+  // Store for admin result screen
+  surveyResult = { scores, finalPct, validated, timestamp };
+
+  // Switch to thank you screen
+  document.getElementById('screen-survey').classList.remove('active');
+  document.getElementById('screen-thanks').classList.add('active');
+  window.scrollTo(0, 0);
+
+  // Submit to Google Sheet
+  if (SHEET_URL) {
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    }).catch(err => console.warn('Sheet submission error:', err));
+  }
+}
+
+// ════════════════════════════════
+// ADMIN RESULT (thank you screen)
+// ════════════════════════════════
+function toggleAdminResult() {
+  const gate = document.getElementById('admin-result-gate');
+  gate.style.display = gate.style.display === 'none' ? 'block' : 'none';
+  if (gate.style.display === 'block') {
+    document.getElementById('ar-pin').focus();
+  }
+}
+
+function checkResultPin() {
+  const val = document.getElementById('ar-pin').value;
+  if (val === ADMIN_PIN) {
+    document.getElementById('ar-pin-gate').style.display = 'none';
+    document.getElementById('ar-content').style.display = 'block';
+    renderAdminResult();
+  } else {
+    document.getElementById('ar-pin-err').style.display = 'block';
+    document.getElementById('ar-pin').value = '';
+  }
+}
+
+function renderAdminResult() {
+  if (!surveyResult) return;
+  const { scores, finalPct, validated, timestamp } = surveyResult;
+
+  document.getElementById('ar-verdict').textContent = validated ? 'VALIDATED' : 'FAILED';
+  document.getElementById('ar-verdict').className = `ar-verdict ${validated ? 'pass' : 'fail'}`;
+  document.getElementById('ar-score').textContent = finalPct + '%';
+  document.getElementById('ar-score').className = `ar-score ${validated ? 'pass' : 'fail'}`;
+  document.getElementById('ar-timestamp').textContent = new Date(timestamp).toLocaleString();
+  const roleMap = {mil:'Military Operator', le:'Law Enforcement', civ:'Civilian'};
+  document.getElementById('ar-role').textContent = roleMap[selectedRole] || selectedRole;
+
+  const sectionsEl = document.getElementById('ar-sections');
+  sectionsEl.innerHTML = '';
+  Object.keys(scores).forEach(s => {
+    const sec = scores[s];
+    const pct = sec.max > 0 ? Math.round((sec.earned / sec.max) * 100) : 0;
+    const pass = pct >= 80;
+    const card = document.createElement('div');
+    card.className = `ar-card ${pass ? 'pass' : 'fail'}`;
+    card.innerHTML = `
+      <div class="ar-card-name">Section ${s} — ${sec.name}</div>
+      <div class="ar-card-score ${pass ? 'pass' : 'fail'}">${pct}%</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:3px;">${sec.earned}/${sec.max} pts &nbsp;·&nbsp; ${pass ? '✓ PASS' : '✗ FAIL'}</div>
+      <div class="ar-bar-bg"><div class="ar-bar-fill ${pass ? 'pass' : 'fail'}" style="width:0%" data-w="${pct}%"></div></div>
+    `;
+    sectionsEl.appendChild(card);
+  });
+
+  setTimeout(() => {
+    document.querySelectorAll('.ar-bar-fill').forEach(b => b.style.width = b.dataset.w);
+  }, 100);
+}
+</script>
+</body>
+</html>
