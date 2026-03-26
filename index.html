@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,8 +21,8 @@
   --le: #60a5fa;
   --civ: #f472b6;
   --text: #c8d8e0;
-  --muted: #4a6070;
-  --dim: #2a3a44;
+  --muted: #7a9aaa;
+  --dim: #4a6070;
   --pass: #00c9a7;
   --fail: #ff4444;
 }
@@ -34,8 +35,8 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:'Barlow',sans-serif;
-  font-size:15px;
-  line-height:1.6;
+  font-size:16px;
+  line-height:1.65;
   min-height:100vh;
   overflow-x:hidden;
 }
@@ -447,7 +448,7 @@ body::before{
 .q:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
 
 .q-text{
-  font-size:14px;
+  font-size:15px;
   font-weight:500;
   color:#c0d0da;
   line-height:1.55;
@@ -495,7 +496,7 @@ body::before{
 }
 .lik-opt input:checked + label .lik-n{color:var(--accent);}
 .lik-d{
-  font-size:9px;
+  font-size:10px;
   color:var(--muted);
   line-height:1.3;
 }
@@ -631,56 +632,7 @@ body::before{
   margin-top:12px;
 }
 
-/* SHEETS CONFIG */
-.sheets-config{
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-left:3px solid var(--accent3);
-  padding:16px 20px;
-  margin-bottom:28px;
-  border-radius:2px;
-}
-.sheets-title{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:16px;
-  letter-spacing:0.05em;
-  color:var(--accent3);
-  margin-bottom:10px;
-}
-.sheets-row{display:flex;gap:8px;align-items:stretch;}
-.sheets-input{
-  flex:1;
-  background:var(--bg2);
-  border:1px solid var(--border);
-  color:var(--text);
-  font-family:'Share Tech Mono',monospace;
-  font-size:11px;
-  padding:8px 12px;
-  border-radius:2px;
-  outline:none;
-  min-width:0;
-}
-.sheets-input:focus{border-color:var(--accent3);}
-.btn-save-url{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:13px;
-  font-weight:700;
-  background:var(--accent3);
-  color:var(--bg);
-  border:none;
-  padding:8px 16px;
-  cursor:pointer;
-  border-radius:2px;
-  white-space:nowrap;
-}
-.url-status{
-  font-family:'Share Tech Mono',monospace;
-  font-size:10px;
-  color:var(--dim);
-  margin-top:7px;
-  letter-spacing:0.05em;
-}
-.url-status.set{color:var(--pass);}
+/* Google Sheet config moved to admin panel */
 
 details summary{
   cursor:pointer;
@@ -900,7 +852,7 @@ details summary{
 
     <div class="landing-intro">
       You are evaluating a <strong>3D-printed concept prototype</strong> of the C.A.R.L. system — a modular weapon-mounted platform designed to consolidate laser targeting, illumination, and comms into a single handguard-integrated unit.<br><br>
-      This is a <strong>feasibility evaluation</strong>, not a live-fire test. <strong style="color:#ff6b2b;">Note: The light and laser are functional on this prototype. The comms button is physically present but has no active internals — evaluate its placement and reach only, not signal performance.</strong> Answer based on what you can physically assess and what you'd conceptually expect from a finished system.
+      This is a <strong>feasibility evaluation</strong>, not a live-fire test. <strong style="color:#ff6b2b;">Note: The light and laser are functional on this prototype. The comms button is physically present but has no active internals — evaluate its placement and reach only, not signal performance.</strong> Answer based on what you can physically assess and what you'd expect from a finished system. <strong style="color:var(--text);">If this prototype passes validation, the production unit will be a single billet aluminum CNC-machined body with black powdercoat — not 3D-printed.</strong>
     </div>
 
     <div class="role-label">Select your background to begin</div>
@@ -929,35 +881,8 @@ details summary{
       </div>
     </div>
 
-    <!-- Sheets config on landing -->
-    <div class="sheets-config">
-      <div class="sheets-title">⚡ Google Sheet Connection</div>
-      <div class="sheets-row">
-        <input type="url" class="sheets-input" id="sheets-url" placeholder="https://script.google.com/macros/s/.../exec" />
-        <button class="btn-save-url" onclick="saveSheetUrl()">Save</button>
-      </div>
-      <div class="url-status" id="url-status">No URL configured — results shown on-screen only.</div>
-      <details>
-        <summary>▸ 2-minute setup instructions</summary>
-        <div class="setup-step">1. Go to <strong>script.google.com</strong> → New Project</div>
-        <div class="setup-step">2. Paste this code and replace YOUR_SHEET_ID:</div>
-        <div class="code-block">function doPost(e) {
-  var sheet = SpreadsheetApp
-    .openById('YOUR_SHEET_ID')
-    .getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
-  var keys = Object.keys(data);
-  if (sheet.getLastRow() === 0) sheet.appendRow(keys);
-  sheet.appendRow(keys.map(k => data[k]));
-  return ContentService
-    .createTextOutput(JSON.stringify({status:'ok'}))
-    .setMimeType(ContentService.MimeType.JSON);
-}</div>
-        <div class="setup-step">3. Deploy → Web App → Execute as Me → Anyone → Deploy → Copy URL</div>
-      </details>
-    </div>
 
-    <button class="btn-start" id="btn-start" onclick="startSurvey()">BEGIN EVALUATION →</button>
+        <button class="btn-start" id="btn-start" onclick="startSurvey()">BEGIN EVALUATION →</button>
   </div><!-- /padding-top:32px -->
 
 </div>
@@ -992,6 +917,16 @@ details summary{
       <div id="admin-content" style="display:none;">
         <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);letter-spacing:0.15em;margin-bottom:10px;">LIVE SCORES — ADMIN ONLY</div>
         <div class="admin-scores-grid" id="admin-scores-grid"></div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--accent3);letter-spacing:0.15em;margin-bottom:8px;">GOOGLE SHEET CONNECTION</div>
+          <div style="display:flex;gap:8px;align-items:stretch;">
+            <input type="url" id="sheets-url" placeholder="https://script.google.com/macros/s/.../exec"
+              style="flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;border-radius:2px;outline:none;"
+              onfocus="this.style.borderColor='var(--accent3)'" onblur="this.style.borderColor='var(--border)'" />
+            <button onclick="saveSheetUrl()" style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;background:var(--accent3);color:var(--bg);border:none;padding:7px 14px;cursor:pointer;border-radius:2px;white-space:nowrap;">Save</button>
+          </div>
+          <div id="url-status" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);margin-top:6px;letter-spacing:0.05em;">No URL configured.</div>
+        </div>
       </div>
     </div>
     </div><!-- /admin-drawer-wrap -->
@@ -1178,7 +1113,7 @@ details summary{
         </div>
 
         <div class="q">
-          <div class="q-text">Rate the button layout concept — based on placement and spacing, do you think you could operate the 6-button interface without removing your hand from the weapon?</div>
+          <div class="q-text">Rate the button layout concept — based on placement and spacing, do you think you could operate the controls on your side of the unit (3 buttons per hand orientation) without removing your hand from the weapon?</div>
           <div class="q-hint">WEIGHT: HIGH (×2) — Central to the C.A.R.L. value proposition</div>
           <div class="likert" data-section="1" data-weight="2" data-name="s1_buttons">
             <div class="lik-opt"><input type="radio" name="s1_buttons" value="1" id="s1b1"><label for="s1b1"><span class="lik-n">1</span><span class="lik-d">Not feasible</span></label></div>
@@ -1216,7 +1151,7 @@ details summary{
         </div>
 
         <div class="q">
-          <div class="q-text">How do you rate the visual design and aesthetics of the unit? Does it look like a serious piece of kit or a toy?</div>
+          <div class="q-text">Setting aside the 3D-printed body — imagine this unit machined from a single billet of aluminum with a black powdercoat finish. Based on the overall shape, proportions, and layout, does the design concept look like serious kit or something you wouldn't take seriously in the field?</div>
           <div class="q-hint">WEIGHT: STANDARD (×1)</div>
           <div class="likert" data-section="1" data-weight="1" data-name="s1_aesthetics">
             <div class="lik-opt"><input type="radio" name="s1_aesthetics" value="1" id="s1a1"><label for="s1a1"><span class="lik-n">1</span><span class="lik-d">Looks like a toy</span></label></div>
@@ -1420,7 +1355,7 @@ details summary{
         </div>
 
         <div class="q">
-          <div class="q-text">Compared to your current accessories setup, how would you rate the value proposition of replacing everything with a single C.A.R.L. unit — assuming it performs as described?</div>
+          <div class="q-text">Compared to your current accessories setup, how would you rate the value proposition of replacing everything with a single C.A.R.L. unit?</div>
           <div class="q-hint">WEIGHT: HIGH (×2)</div>
           <div class="likert" data-section="3" data-weight="2" data-name="s3_civ_value">
             <div class="lik-opt"><input type="radio" name="s3_civ_value" value="1" id="s3cv1"><label for="s3cv1"><span class="lik-n">1</span><span class="lik-d">Not worth it</span></label></div>
@@ -1542,6 +1477,38 @@ details summary{
   <div class="thanks-sub">Evaluation Recorded</div>
   <p class="thanks-msg">Your feedback has been submitted. Your assessment plays a direct role in determining the future of this product. We appreciate your time and honesty.</p>
 
+  <div style="margin-top:32px;padding:20px 24px;background:var(--panel);border:1px solid var(--border);border-radius:2px;max-width:420px;width:100%;text-align:left;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-bottom:12px;">Know someone who should evaluate this?</div>
+    <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;">If you know a fellow operator, officer, or firearms enthusiast whose feedback would be valuable — send them the evaluation link.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a id="email-share-link" href="#" onclick="shareByEmail()" style="
+        display:inline-block;
+        font-family:'Bebas Neue',sans-serif;
+        font-size:15px;
+        letter-spacing:0.2em;
+        background:var(--accent);
+        color:var(--bg);
+        padding:12px 24px;
+        border-radius:2px;
+        text-decoration:none;
+        transition:all 0.2s;
+      ">✉ Email This Evaluation</a>
+      <button onclick="copyLink()" id="copy-btn" style="
+        font-family:'Bebas Neue',sans-serif;
+        font-size:15px;
+        letter-spacing:0.2em;
+        background:none;
+        color:var(--accent);
+        border:1px solid var(--accent);
+        padding:12px 24px;
+        border-radius:2px;
+        cursor:pointer;
+        transition:all 0.2s;
+      ">⎘ Copy Link</button>
+    </div>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);margin-top:12px;letter-spacing:0.05em;">Reminder: Ask them to keep all product details confidential.</p>
+  </div>
+
   <!-- ADMIN RESULT — PIN protected, hidden by default -->
   <div style="width:100%;max-width:680px;margin-top:40px;padding:0 16px;" id="admin-result-wrap">
     <div style="text-align:center;margin-bottom:16px;">
@@ -1589,10 +1556,17 @@ let surveyResult = null;
 const ADMIN_PIN = '3322';
 
 let SHEET_URL = localStorage.getItem('carl_sheet_url') || '';
-if (SHEET_URL) {
-  document.getElementById('sheets-url').value = SHEET_URL;
-  document.getElementById('url-status').textContent = '✓ Connected — submissions will go to your Google Sheet.';
-  document.getElementById('url-status').className = 'url-status set';
+// Restore saved Sheet URL into admin panel input when admin unlocks
+function restoreSheetUrl() {
+  const input = document.getElementById('sheets-url');
+  const status = document.getElementById('url-status');
+  if (input && SHEET_URL) {
+    input.value = SHEET_URL;
+    if (status) {
+      status.textContent = '✓ Connected — submissions will go to your Google Sheet.';
+      status.style.color = 'var(--pass)';
+    }
+  }
 }
 
 function saveSheetUrl() {
@@ -1600,8 +1574,11 @@ function saveSheetUrl() {
   if (url) {
     SHEET_URL = url;
     localStorage.setItem('carl_sheet_url', url);
-    document.getElementById('url-status').textContent = '✓ Saved — ready to receive submissions.';
-    document.getElementById('url-status').className = 'url-status set';
+    const statusEl = document.getElementById('url-status');
+    if (statusEl) {
+      statusEl.textContent = '✓ Saved — submissions will go to your Google Sheet.';
+      statusEl.style.color = 'var(--pass)';
+    }
   }
 }
 
@@ -1755,6 +1732,7 @@ function checkPin() {
     document.getElementById('admin-pin-gate').style.display = 'none';
     document.getElementById('admin-content').style.display = 'block';
     updateAdminScores();
+    restoreSheetUrl();
   } else {
     document.getElementById('pin-err').style.display = 'block';
     document.getElementById('admin-pin').value = '';
@@ -1842,6 +1820,31 @@ function submitSurvey() {
       body: JSON.stringify(formData)
     }).catch(err => console.warn('Sheet submission error:', err));
   }
+}
+
+// ════════════════════════════════
+// SHARE FUNCTIONS
+// ════════════════════════════════
+function shareByEmail() {
+  const subject = encodeURIComponent('C.A.R.L. Prototype Evaluation — Your Input Needed');
+  const body = encodeURIComponent(
+    'I recently evaluated the C.A.R.L. (Combat Adaptive Rifle Light/Laser) prototype and thought you might have valuable feedback too.\n\n' +
+    'C.A.R.L. is a modular weapon-mounted system that consolidates laser targeting, illumination, and comms into a single integrated handguard unit.\n\n' +
+    'Take the evaluation here: ' + window.location.href.split('?')[0] + '\n\n' +
+    'Note: All product details are confidential — please do not share information about this system with others.'
+  );
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
+
+function copyLink() {
+  const url = window.location.href.split('?')[0];
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = '⎘ Copy Link'; }, 2000);
+  }).catch(() => {
+    prompt('Copy this link:', url);
+  });
 }
 
 // ════════════════════════════════
