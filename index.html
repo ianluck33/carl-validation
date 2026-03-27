@@ -852,7 +852,7 @@ details summary{
 
     <div class="landing-intro">
       You are evaluating a <strong>3D-printed concept prototype</strong> of the C.A.R.L. system — a modular weapon-mounted platform designed to consolidate laser targeting, illumination, and comms into a single handguard-integrated unit.<br><br>
-      This is a <strong>feasibility evaluation</strong>, not a live-fire test. <strong style="color:#ff6b2b;">Note: The light and laser are functional on this prototype. The comms button is physically present but has no active internals — evaluate its placement and reach only, not signal performance.</strong> Answer based on what you can physically assess and what you'd expect from a finished system. <strong style="color:var(--text);">If this prototype passes validation, the production unit will be a single billet aluminum CNC-machined body with black powdercoat — not 3D-printed.</strong>
+      This is a <strong>feasibility evaluation</strong>, not a live-fire test. <strong style="color:#ff6b2b;">Note: The light and laser are functional on this prototype. The comms button is physically present but has no active internals — evaluate its placement and reach only, not signal performance.</strong> Answer based on what you can physically assess and what you'd expect from a finished system. <strong style="color:var(--text);">If this prototype passes validation, the production unit will be a single billet aluminum CNC-machined body with Cerakote FDE or Nitride black finish — not 3D-printed.</strong>
     </div>
 
     <div class="role-label">Select your background to begin</div>
@@ -1151,7 +1151,7 @@ details summary{
         </div>
 
         <div class="q">
-          <div class="q-text">Setting aside the 3D-printed body — imagine this unit machined from a single billet of aluminum with a black powdercoat finish. Based on the overall shape, proportions, and layout, does the design concept look like serious kit or something you wouldn't take seriously in the field?</div>
+          <div class="q-text">Setting aside the 3D-printed body — imagine this unit machined from a single billet of aluminum with a Cerakote FDE or Nitride black finish. Based on the overall shape, proportions, and layout, does the design concept look like serious kit or something you wouldn't take seriously in the field?</div>
           <div class="q-hint">WEIGHT: STANDARD (×1)</div>
           <div class="likert" data-section="1" data-weight="1" data-name="s1_aesthetics">
             <div class="lik-opt"><input type="radio" name="s1_aesthetics" value="1" id="s1a1"><label for="s1a1"><span class="lik-n">1</span><span class="lik-d">Looks like a toy</span></label></div>
@@ -1682,10 +1682,13 @@ function calculateScores() {
     sections[s] = { earned: 0, max: 0, name: getSectionName(s) };
   });
 
-  // Likert
+  // Likert — only score questions inside visible blocks
   document.querySelectorAll('[data-section].likert').forEach(q => {
     const s = q.dataset.section;
     if (!visibleSections.has(s)) return;
+    // Skip if inside a role-section that is not shown
+    const parentBlock = q.closest('.s-block');
+    if (parentBlock && parentBlock.classList.contains('role-section') && !parentBlock.classList.contains('show')) return;
     const weight = parseInt(q.dataset.weight || 1);
     const name = q.dataset.name;
     const val = document.querySelector(`input[name="${name}"]:checked`);
@@ -1693,10 +1696,13 @@ function calculateScores() {
     if (val) sections[s].earned += parseInt(val.value) * weight;
   });
 
-  // Binary
+  // Binary — only score questions inside visible blocks
   document.querySelectorAll('[data-section].binary').forEach(q => {
     const s = q.dataset.section;
     if (!visibleSections.has(s)) return;
+    // Skip if inside a role-section that is not shown
+    const parentBlock = q.closest('.s-block');
+    if (parentBlock && parentBlock.classList.contains('role-section') && !parentBlock.classList.contains('show')) return;
     const name = q.dataset.name;
     const val = document.querySelector(`input[name="${name}"]:checked`);
     sections[s].max += 5;
@@ -1785,6 +1791,7 @@ function updateAdminScores() {
 // ════════════════════════════════
 function submitSurvey() {
   const btn = document.getElementById('btn-submit');
+  if (btn.disabled) return; // prevent double-fire
   btn.disabled = true;
   btn.textContent = 'SUBMITTING...';
 
@@ -1841,13 +1848,21 @@ function submitSurvey() {
 // ════════════════════════════════
 function shareByEmail() {
   const subject = encodeURIComponent('C.A.R.L. Prototype Evaluation — Your Input Needed');
+  const surveyUrl = window.location.href.split('?')[0].replace(/#.*$/, '');
   const body = encodeURIComponent(
     'I recently evaluated the C.A.R.L. (Combat Adaptive Rifle Light/Laser) prototype and thought you might have valuable feedback too.\n\n' +
     'C.A.R.L. is a modular weapon-mounted system that consolidates laser targeting, illumination, and comms into a single integrated handguard unit.\n\n' +
-    'Take the evaluation here: ' + window.location.href.split('?')[0] + '\n\n' +
+    'Take the evaluation here: ' + surveyUrl + '\n\n' +
     'Note: All product details are confidential — please do not share information about this system with others.'
   );
-  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+  // Use a temp anchor to avoid navigation interference on Windows/Edge
+  const a = document.createElement('a');
+  a.href = 'mailto:?subject=' + subject + '&body=' + body;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => document.body.removeChild(a), 100);
 }
 
 function copyLink() {
